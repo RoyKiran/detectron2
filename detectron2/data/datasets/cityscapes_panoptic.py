@@ -171,17 +171,18 @@ def register_all_cityscapes_panoptic(root):
         image_dir = os.path.join(root, image_dir)
         gt_dir = os.path.join(root, gt_dir)
         gt_json = os.path.join(root, gt_json)
-
-        DatasetCatalog.register(
-            key, lambda x=image_dir, y=gt_dir, z=gt_json: load_cityscapes_panoptic(x, y, z, meta)
-        )
-        MetadataCatalog.get(key).set(
-            panoptic_root=gt_dir,
-            image_root=image_dir,
-            panoptic_json=gt_json,
-            gt_dir=gt_dir.replace("cityscapes_panoptic_", ""),
-            evaluator_type="cityscapes_panoptic_seg",
-            ignore_label=255,
-            label_divisor=1000,
-            **meta,
-        )
+        
+        if key not in DatasetCatalog.list():
+            DatasetCatalog.register(
+                key, lambda x=image_dir, y=gt_dir, z=gt_json: load_cityscapes_panoptic(x, y, z, meta)
+            )
+            MetadataCatalog.get(key).set(
+                panoptic_root=gt_dir,
+                image_root=image_dir,
+                panoptic_json=gt_json,
+                gt_dir=gt_dir.replace("cityscapes_panoptic_", ""),
+                evaluator_type="cityscapes_panoptic_seg",
+                ignore_label=255,
+                label_divisor=1000,
+                **meta,
+            )
